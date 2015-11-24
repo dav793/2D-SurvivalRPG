@@ -1,4 +1,5 @@
-﻿using System;
+﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 public class WorldSector {
@@ -7,9 +8,10 @@ public class WorldSector {
     public SectorLevels levels;
 
     public WorldSector(int x_index, int z_index) {
-        x = x_index;
+		//Debug.Log ("------Creating sector: (" + x_index + ", " + z_index + ")");
+		x = x_index;
         z = z_index;
-
+		
         initLevels();
     }
 
@@ -39,8 +41,11 @@ public class SectorLevels {
     }
 
     public void initLevel(int level_y) {
-        levels.Add(new WorldSectorLevel(x, level_y, z));
-    }
+		if (!levelExists (level_y))
+			levels.Add (new WorldSectorLevel (x, level_y, z));
+		else
+			throw new InvalidOperationException ("Level " + level_y + " already exists in sector " + x + ", " + z + ".");
+	}
 
     public bool levelExists(int level_y) {
         for (int i = 0; i < levels.Count; ++i) {
@@ -51,10 +56,14 @@ public class SectorLevels {
     }
 
     public WorldSectorLevel getLevel(int level_y) {
+		if (!levelExists (level_y))
+			initLevel (level_y);
+
         for (int i = 0; i < levels.Count; ++i) {
             if (levels[i].y == level_y)
                 return levels[i];
         }
+
         return null;
     }
 

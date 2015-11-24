@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class WorldSectorLevel {
@@ -30,17 +31,30 @@ public class WorldSectorLevel {
                     y, 
                     z * GameSettings.LoadedConfig.SectorLength_Cells + cell_z
                 );
-                //Debug.Log("Created cell: (" + (x * GameSettings.LoadedConfig.SectorLength_Cells + cell_x) + ", " + (z * GameSettings.LoadedConfig.SectorLength_Cells + cell_z) + ")");
             }
         }
 
     }
 
-    public WorldCell getCell(int cell_x, int cell_z) {
-        return cells[
-            cell_x % GameSettings.LoadedConfig.SectorLength_Cells,
-            cell_z % GameSettings.LoadedConfig.SectorLength_Cells
-        ];
-    }
+	public WorldCell getCell(int cell_x, int cell_z) {
+
+		if (!(
+			cell_x >= x * GameSettings.LoadedConfig.SectorLength_Cells &&
+			cell_x < (x + 1) * GameSettings.LoadedConfig.SectorLength_Cells &&
+			cell_z >= z * GameSettings.LoadedConfig.SectorLength_Cells &&
+			cell_z < (z + 1) * GameSettings.LoadedConfig.SectorLength_Cells
+		))
+			throw new InvalidOperationException ("Cell ("+cell_x+","+cell_z+") does not belong to sector ("+x+","+z+").");
+
+		return cells[
+			cell_x % GameSettings.LoadedConfig.SectorLength_Cells,
+		    cell_z % GameSettings.LoadedConfig.SectorLength_Cells
+		];
+
+	}
+
+	public string indexToString() {
+		return "Sector: (" + x + ", " + z + ") level: "+y;
+	}
 
 }

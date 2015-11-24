@@ -21,8 +21,11 @@ public class RenderingController : MonoBehaviour {
     }
 
     public static void Init() {
+		Debug.Log ("Setting up renderer...");
         setActiveRenderer(Renderers.Default2D);
-    }
+		ActiveRenderer.init ();
+		Debug.Log ("Renderer set.");
+	}
 
     static void setActiveRenderer(Renderers style) {
 
@@ -41,7 +44,7 @@ public class RenderingController : MonoBehaviour {
 
                 StyleRenderer rendComponent = rendObjTransform.GetComponent<Renderer2D>();
                 if (rendComponent == null) {
-                    throw new InvalidOperationException("Selected renderer is missing component.");
+                    throw new InvalidOperationException("Selected renderer is missing renderer component.");
                 }
 
                 ActiveRenderer = rendComponent;
