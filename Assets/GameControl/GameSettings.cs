@@ -5,6 +5,7 @@ public class GameSettings : MonoBehaviour {
 
     public static GameSettings LoadedConfig;
 
+	public string ActiveWorldFile;				// Path to the active world file
 	public int WorldLength_Chunks;				// Length of World border in number of chunks
     public int ChunkLength_Sectors;             // Length of Chunk border in number of Sectors
     public int SectorLength_Cells;              // Length of Sector border in number of Cells

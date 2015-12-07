@@ -37,16 +37,28 @@ public class LoadedWorldChunks {
 		}
 	}
 
-	public void unloadChunk(WorldChunk chunk) {
+	public bool loadChunk(int chunk_x, int chunk_z) {
+
+		// Try to load from world file
+
+		return false;
+
+	}
+
+	public void unloadChunk(int chunk_x, int chunk_z) {
+
+		// Save to world file
+
 		switch (dataStructure) {
 			case LoadedChunks_DataStructure.HashTable:
-				loadedWorldChunks_HT.removeChunk(chunk);
+				loadedWorldChunks_HT.removeChunk(chunk_x, chunk_z);
 				break;
 				
 			case LoadedChunks_DataStructure.List:
-				loadedWorldChunks_L.removeChunk(chunk);
+				loadedWorldChunks_L.removeChunk(chunk_x, chunk_z);
 				break;
 		}
+
 	}
 
 	public bool chunkIsLoaded(int abs_chunk_index) {

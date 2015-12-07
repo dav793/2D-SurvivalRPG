@@ -13,7 +13,7 @@ public class GameObjectPool : MonoBehaviour {
 
 	public void init() {
 
-		if (objectPrefab == null || size == null) {
+		if (objectPrefab == null || size == 0) {
 			throw new InvalidOperationException("Object pool parameters not set.");
 		}
 
@@ -28,6 +28,14 @@ public class GameObjectPool : MonoBehaviour {
 	public void push(GameObject obj) {
 		obj.SetActive (false);
 		pool.Push (obj);
+		obj.transform.position = Vector3.zero;
+	}
+
+	public void pushAndResetParent(GameObject obj) {
+		push (obj);
+		setName (obj);
+		obj.transform.parent = transform;
+		obj.transform.position = Vector3.zero;
 	}
 
 	public GameObject pop() {
@@ -37,7 +45,6 @@ public class GameObjectPool : MonoBehaviour {
 			return obj;
 		}
 		throw new InvalidOperationException ("Object pool is empty.");
-		return null;
 	}
 
 	public int getObjCount() {
@@ -45,18 +52,17 @@ public class GameObjectPool : MonoBehaviour {
 	}
 
 	void instantiateObject() {
-
 		GameObject obj = Instantiate (objectPrefab) as GameObject;
+		setName (obj);
+		obj.transform.parent = gameObject.transform;
+		push (obj);
+	}
 
+	void setName(GameObject obj) {
 		if (objectName != null)
 			obj.name = objectName;
 		else 
 			obj.name = "NewObject";
-		
-		obj.transform.parent = gameObject.transform;
-
-		push (obj);
-	
 	}
 
 }

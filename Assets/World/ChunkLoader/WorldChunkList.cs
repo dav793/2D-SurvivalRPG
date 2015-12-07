@@ -12,17 +12,27 @@ public class WorldChunkList {
 	}
 
 	public void addChunk(WorldChunk chunk) {
-		if (!chunkExists (chunk))
+		if (!chunkExists (chunk.getX (), chunk.getZ ())) {
 			chunks.Add (chunk);
+			Debug.Log ("Loaded " + chunk.indexToString ());
+		}
 	}
 
-	public void removeChunk(WorldChunk chunk) {
-		chunks.Remove (chunk);
+	public void removeChunk(int chunk_x, int chunk_z) {
+		for (int i = 0; i < chunks.Count; ++i) {
+			if (chunks[i].getX() == chunk_x && chunks[i].getZ() == chunk_z) {
+				chunks.RemoveAt(i);
+				Debug.Log ("Unloaded Chunk: ("+chunk_x+", "+chunk_z+")");
+				break;
+			}
+		}
 	}
 
-	public bool chunkExists(WorldChunk chunk) {
-		if (chunks.Contains (chunk))
-			return true;
+	public bool chunkExists(int chunk_x, int chunk_z) {
+		for (int i = 0; i < chunks.Count; ++i) {
+			if (chunks[i].getX() == chunk_x && chunks[i].getZ() == chunk_z)
+				return true;
+		}
 		return false;
 	}
 

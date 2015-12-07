@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public enum Renderers { Default2D, Default3D };
 
@@ -22,16 +23,12 @@ public class RenderingController : MonoBehaviour {
 
     public static void Init() {
 		Debug.Log ("Setting up renderer...");
-        setActiveRenderer(Renderers.Default2D);
+        SetActiveRenderer(Renderers.Default2D);
 		ActiveRenderer.init ();
 		Debug.Log ("Renderer set.");
 	}
 
-    static void setActiveRenderer(Renderers style) {
-
-        if (RendController == null) {
-            throw new InvalidOperationException("RendererController reference is missing.");
-        }
+    static void SetActiveRenderer(Renderers style) {
 
         switch (style) {
 
@@ -54,5 +51,15 @@ public class RenderingController : MonoBehaviour {
         }
 
     }
+
+	public static void RenderSectorLevel(int x, int y, int z) {
+		WorldSectorLevel sectorLevel = World.GetSectorLevel (x, y, z);
+		ActiveRenderer.renderSectorLevel (sectorLevel);
+	}
+
+	public static void UnrenderSectorLevel(int x, int y, int z) {
+		WorldSectorLevel sectorLevel = World.GetSectorLevel (x, y, z);
+		ActiveRenderer.unrenderSectorLevel (sectorLevel);
+	}
 
 }

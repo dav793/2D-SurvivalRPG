@@ -5,13 +5,47 @@ public class WorldCell {
 
     public int x, y, z;
 
+	// Render properties
+	WorldCellRenderData renderData;
+	RendererWorldObject renderedObject;
+
     public WorldCell(int cell_x, int cell_y, int cell_z) {
 
         x = cell_x;
         y = cell_y;
         z = cell_z;
 
+		renderData = new WorldCellRenderData ();
+
     }
+
+	public string indexToString() {
+		return "Cell: (" + x + ", " + y + ", " + z + ")";
+	}
+
+
+	// Render functions
+
+	public void attachRenderObject(RendererWorldObject obj) {
+		if (renderedObject == null)
+			renderedObject = obj;
+	}
+
+	public void detachRenderObject() {
+		renderedObject = null;
+	}
+
+	public RendererWorldObject getRenderObject() {
+		if (renderedObject == null)
+			Debug.LogError ("Cell is not rendered!");
+		return renderedObject;
+	}
+
+	public WorldCellRenderData getRenderData() {
+		if (renderData == null)
+			Debug.LogError ("Cell does not have a Render Data element!");
+		return renderData;
+	}
 
 	/*public void getIndexInSector(out int x_in_sector, out int z_in_sector) {
 		x_in_sector = x % GameSettings.LoadedConfig.SectorLength_Cells;
@@ -22,10 +56,6 @@ public class WorldCell {
 		sector_x = Mathf.FloorToInt (x / GameSettings.LoadedConfig.SectorLength_Cells);
 		sector_z = Mathf.FloorToInt (z / GameSettings.LoadedConfig.SectorLength_Cells);
 	}*/
-
-    public string indexToString() {
-        return "Cell: (" + x + ", " + y + ", " + z + ")";
-    }
 
 	/*public string indexInSectorToString() {
 		int x_in_sector, z_in_sector, sector_x, sector_z;

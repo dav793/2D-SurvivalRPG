@@ -8,12 +8,8 @@ public class WOComponent : MonoBehaviour {
 	[HideInInspector]
 	public WOComponentType type;
 
-	public virtual void init() {
+	public virtual void init() {}
 
-	}
-
-	public virtual void terminate() {
-		
-	}
+	public virtual void terminate() {}
 
 }

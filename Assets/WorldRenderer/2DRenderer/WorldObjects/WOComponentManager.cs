@@ -3,27 +3,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public enum WorldObjectTypes { Unassigned, TerrainCell };
-
 public class WOComponentManager : MonoBehaviour {
 
-	public GameObject spriteComponentPrefab;
-
-	public WorldObjectTypes type = WorldObjectTypes.Unassigned;
+	RendererWorldObject objectHandle;
 	List<WOComponent> attachedComponents;
 
-	public void init(WorldObjectTypes type) {
-
-		if (!checkComponentIntegrity ())
-			throw new InvalidOperationException ("Some component prefabs have not been assigned.");
-
-		this.type = type;
+	public void init(RendererWorldObject handle) {
+		objectHandle = handle;
 		setupComponents ();
-
 	}
 
 	public void terminate() {
-		type = WorldObjectTypes.Unassigned;
 		detachComponents ();
 	}
 
@@ -32,28 +22,25 @@ public class WOComponentManager : MonoBehaviour {
 		if (attachedComponents != null)
 			throw new InvalidOperationException ("World Object already has components attached to it.");
 
-		attachComponents (type);
+		attachComponents ();
 
 	}
 
-	void attachComponents(WorldObjectTypes type) {
+	void attachComponents() {
 
 		attachedComponents = new List<WOComponent> ();
 
-		switch (type) {
+		switch (objectHandle.type) {
 		
 			case WorldObjectTypes.TerrainCell:		// Attach components for Terrain Cell object.
 				
 				// Attach sprite component.
-				GameObject spriteComponentObj = Instantiate(spriteComponentPrefab) as GameObject;
-				spriteComponentObj.transform.parent = transform;
-
-				WOSpriteComponent spriteComponent = spriteComponentObj.GetComponent<WOSpriteComponent>();
-				if(spriteComponent == null)
-					throw new InvalidOperationException("Sprite Component prefab is malformed or not set correctly.");
-				
+				WOSpriteComponent spriteComponent = ((Renderer2D)RenderingController.ActiveRenderer).worldObjectComponentPools.spriteComponentPool.pop().GetComponent<WOSpriteComponent> ();
+				spriteComponent.transform.parent = transform;
 				attachedComponents.Add(spriteComponent);
-				attachedComponents[attachedComponents.Count-1].init();
+				
+				spriteComponent.init ();
+				//attachedComponents[attachedComponents.Count-1].init();
 
 				break;
 		
@@ -65,18 +52,29 @@ public class WOComponentManager : MonoBehaviour {
 		for (; attachedComponents.Count > 0 ;) {
 			detachComponent(attachedComponents[0]);
 		}
+		attachedComponents = null;
 	}
 
 	void detachComponent(WOComponent component) {
-		component.terminate ();
 		attachedComponents.Remove (component);
-		Destroy (component.gameObject);
+		component.terminate ();
+		((Renderer2D)RenderingController.ActiveRenderer).worldObjectComponentPools.spriteComponentPool.pushAndResetParent (component.gameObject);
 	}
 
-	bool checkComponentIntegrity() {
-		if (spriteComponentPrefab == null)
-			return false;
-		return true;
+	public WOSpriteComponent getSpriteComponent() {
+		for (int i = 0; i < attachedComponents.Count; ++i) {
+			if ((WOSpriteComponent)attachedComponents[i] != null)
+				return (WOSpriteComponent)attachedComponents[i];
+		}
+		return null;
+	}
+
+	public void initSprites(int num_sprites) {
+		WOSpriteComponent spriteComponent = getSpriteComponent ();
+		if(spriteComponent == null)
+			throw new InvalidOperationException ("Object does not have a sprite component attached.");
+
+		spriteComponent.attachSprites (num_sprites);
 	}
 
 }

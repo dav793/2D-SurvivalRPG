@@ -8,6 +8,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400648}
+  - 114: {fileID: 11440490}
   - 114: {fileID: 11440950}
   m_Layer: 0
   m_Name: WorldObject
@@ -28,6 +29,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!114 &11440490
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 189240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9681c36815b8fe84d9525cbd20fd0a2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 0
+  componentManager: {fileID: 0}
 --- !u!114 &11440950
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -39,9 +53,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 349d82e6d56b22b429b8bbc887079be6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteComponentPrefab: {fileID: 147718, guid: e244de5005574d24b9be9dbf636fa130,
-    type: 2}
-  type: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

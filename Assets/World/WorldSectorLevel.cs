@@ -7,6 +7,9 @@ public class WorldSectorLevel {
     public int x, y, z;
     WorldCell[,] cells;
 
+	// Render properties
+	public bool isRendered = false;
+
     public WorldSectorLevel(int sector_x, int level_y, int sector_z) {
         x = sector_x;
         z = sector_z;
@@ -19,17 +22,17 @@ public class WorldSectorLevel {
 
         // declare cells
         cells = new WorldCell[
-            GameSettings.LoadedConfig.SectorLength_Cells,
-            GameSettings.LoadedConfig.SectorLength_Cells
+            getSectorLengthInCells(),
+            getSectorLengthInCells()
         ];
 
         // init cells
-        for (int cell_x = 0; cell_x < GameSettings.LoadedConfig.SectorLength_Cells; ++cell_x) {
-            for (int cell_z = 0; cell_z < GameSettings.LoadedConfig.SectorLength_Cells; ++cell_z) {
+		for (int cell_x = 0; cell_x < getSectorLengthInCells(); ++cell_x) {
+			for (int cell_z = 0; cell_z < getSectorLengthInCells(); ++cell_z) {
                 cells[cell_x, cell_z] = new WorldCell(
-                    x * GameSettings.LoadedConfig.SectorLength_Cells + cell_x, 
+					x * getSectorLengthInCells() + cell_x, 
                     y, 
-                    z * GameSettings.LoadedConfig.SectorLength_Cells + cell_z
+					z * getSectorLengthInCells() + cell_z
                 );
             }
         }
@@ -39,18 +42,26 @@ public class WorldSectorLevel {
 	public WorldCell getCell(int cell_x, int cell_z) {
 
 		if (!(
-			cell_x >= x * GameSettings.LoadedConfig.SectorLength_Cells &&
-			cell_x < (x + 1) * GameSettings.LoadedConfig.SectorLength_Cells &&
-			cell_z >= z * GameSettings.LoadedConfig.SectorLength_Cells &&
-			cell_z < (z + 1) * GameSettings.LoadedConfig.SectorLength_Cells
+			cell_x >= x * getSectorLengthInCells() &&
+			cell_x < (x + 1) * getSectorLengthInCells() &&
+			cell_z >= z * getSectorLengthInCells() &&
+			cell_z < (z + 1) * getSectorLengthInCells()
 		))
 			throw new InvalidOperationException ("Cell ("+cell_x+","+cell_z+") does not belong to sector ("+x+","+z+").");
 
 		return cells[
-			cell_x % GameSettings.LoadedConfig.SectorLength_Cells,
-		    cell_z % GameSettings.LoadedConfig.SectorLength_Cells
+			cell_x % getSectorLengthInCells(),
+		    cell_z % getSectorLengthInCells()
 		];
 
+	}
+
+	public WorldCell[,] getAllCells() {
+		return cells;
+	}
+
+	public int getSectorLengthInCells() {
+		return GameSettings.LoadedConfig.SectorLength_Cells;
 	}
 
 	public string indexToString() {
