@@ -79,7 +79,7 @@ public class WorldSectorLevel {
 	}
 
 	public string indexToString() {
-		return "Sector: (" + x + ", " + z + ") level: "+y;
+		return "SectorLevel: (" + x + ", " + y + ", " + z + ")";
 	}
 
 }

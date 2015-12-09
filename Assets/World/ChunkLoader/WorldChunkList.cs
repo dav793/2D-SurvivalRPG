@@ -14,7 +14,7 @@ public class WorldChunkList {
 	public void addChunk(WorldChunk chunk) {
 		if (!chunkExists (chunk.getX (), chunk.getZ ())) {
 			chunks.Add (chunk);
-			Debug.Log ("Loaded " + chunk.indexToString ());
+			Debug.Log (chunk.indexToString () + " was loaded in memory.");
 		}
 	}
 
@@ -22,7 +22,7 @@ public class WorldChunkList {
 		for (int i = 0; i < chunks.Count; ++i) {
 			if (chunks[i].getX() == chunk_x && chunks[i].getZ() == chunk_z) {
 				chunks.RemoveAt(i);
-				Debug.Log ("Unloaded Chunk: ("+chunk_x+", "+chunk_z+")");
+				Debug.Log ("Chunk: ("+chunk_x+", "+chunk_z+") was unloaded from memory.");
 				break;
 			}
 		}

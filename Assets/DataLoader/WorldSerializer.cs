@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
+using System.IO.Compression;
 
 public class WorldSerializer : MonoBehaviour {
 	
 	public static WorldSerializer WSerializer;
 	
 	WorldData wdata;
-	
 	string chunksDirName = "chunks";
 	string chunkFilePrefix = "chunk_";
 	
@@ -27,8 +27,6 @@ public class WorldSerializer : MonoBehaviour {
 	
 	public static void SaveLoadedChunks() {
 		
-		WSerializer.serializeWorldData ();
-		
 		string savesDirPath = Path.Combine (Application.persistentDataPath, GameSettings.LoadedConfig.SavesPath);
 		bool savesDirExists = System.IO.Directory.Exists (savesDirPath);
 		if (!savesDirExists) {
@@ -40,39 +38,29 @@ public class WorldSerializer : MonoBehaviour {
 		if (!activeWorldDirExists) {
 			System.IO.Directory.CreateDirectory(activeWorldDirPath);
 		}
-
+		
 		string chunksDirPath = Path.Combine (activeWorldDirPath, WSerializer.chunksDirName);
 		bool chunksDirExists = System.IO.Directory.Exists (chunksDirPath);
 		if (!chunksDirExists) {
 			System.IO.Directory.CreateDirectory(chunksDirPath);
 		}
 		
-
-		// change
-		string worldfilePath = Path.Combine (activeWorldDirPath, GameSettings.LoadedConfig.ActiveWorldFile);
-		Debug.Log("Saving world: "+worldfilePath);
+		WSerializer.serializeWorldData ();
 		
-		XmlSerializer serializer = new XmlSerializer (typeof(WorldData));
-		FileStream stream = new FileStream (worldfilePath, FileMode.Create);
-		serializer.Serialize (stream, WSerializer.wdata);
-		stream.Close ();
-		// end change
-
-
-		/*List<SerializableChunk> chunks = WSerializer.wdata.chunks;
+		List<SerializableChunk> chunks = WSerializer.wdata.chunks;
 		for (int i = 0; i < chunks.Count; ++i) {
 			
 			string chunkFilePath = Path.Combine (chunksDirPath, WSerializer.chunkFilePrefix + chunks[i].x + "-" + chunks[i].z + ".sav");
 			
-			Debug.Log("Saving chunk: "+chunks[i].x+", "+chunks[i].z);
+			Debug.Log("Chunk: ("+chunks[i].x+", "+chunks[i].z+") was saved.");
 			
 			XmlSerializer serializer = new XmlSerializer (typeof(SerializableChunk));
 			FileStream stream = new FileStream (chunkFilePath, FileMode.Create);
 			serializer.Serialize (stream, chunks[i]);
 			stream.Close ();
-			
-		}*/
 
+		}
+		
 	}
 	
 	public static WorldChunk LoadChunk(int x, int z) {
@@ -88,62 +76,29 @@ public class WorldSerializer : MonoBehaviour {
 		if (!activeWorldDirExists) {
 			return null;
 		}
-
+		
 		string chunksDirPath = Path.Combine (activeWorldDirPath, WSerializer.chunksDirName);
 		bool chunksDirExists = System.IO.Directory.Exists (chunksDirPath);
 		if (!chunksDirExists) {
-			//return null;
+			return null;
 		}
 		
 		string chunkFilePath = Path.Combine (chunksDirPath, WSerializer.chunkFilePrefix + x + "-" + z + ".sav");
 		bool chunkFileExists = System.IO.File.Exists (chunkFilePath);
 		if (!chunkFileExists) {
-			//return null;
-		}
-
-		// change
-		string worldfilePath = Path.Combine (activeWorldDirPath, GameSettings.LoadedConfig.ActiveWorldFile);
-		bool worldfileExists = System.IO.File.Exists (worldfilePath);
-		if (!worldfileExists) {
 			return null;
 		}
 		
-		Debug.Log("Loading world: "+worldfilePath);
-		
-		XmlSerializer serializer = new XmlSerializer (typeof(WorldData));
-		FileStream stream = new FileStream (worldfilePath, FileMode.Open);
-		WorldData loadedData = serializer.Deserialize (stream) as WorldData;
-		stream.Close ();
-		
-		SerializableChunk loadedChunk = loadedData.findChunk (x, z);
-		if (loadedChunk == null) {	
-			// chunk not found in file
-			return null;
-		}
-		
-		WorldChunk restoredChunk = new WorldChunk (x, z);
-		restoredChunk.restoreChunkData (loadedChunk);
-		Debug.Log("Chunk ("+x+", "+z+") restored from file.");
-		// end change
-
-
-		/*Debug.Log("Loading chunk from file: "+x+", "+z);
-		
-		XmlSerializer serializer = new XmlSerializer (typeof(WorldData));
+		XmlSerializer serializer = new XmlSerializer (typeof(SerializableChunk));
 		FileStream stream = new FileStream (chunkFilePath, FileMode.Open);
 		SerializableChunk loadedChunk = serializer.Deserialize (stream) as SerializableChunk;
 		stream.Close ();
 		
 		WorldChunk restoredChunk = new WorldChunk (x, z);
 		restoredChunk.restoreChunkData (loadedChunk);
-		Debug.Log("Chunk ("+x+", "+z+") restored from file.");*/
-
+		Debug.Log("Chunk: ("+x+", "+z+") was restored from file.");
 		
 		return restoredChunk;
-		
-	}
-	
-	void loadActiveWorldFile() {
 		
 	}
 	
@@ -154,7 +109,6 @@ public class WorldSerializer : MonoBehaviour {
 		
 		for (int i = 0; i < loadedChunks.Count; ++i) {
 			wdata.chunks.Add(new SerializableChunk());
-			
 			serializeChunkData(wdata.chunks[i], loadedChunks[i]);
 		}
 		
@@ -231,11 +185,8 @@ public class WorldSerializer : MonoBehaviour {
 	
 }
 
-[XmlRoot("WorldData")]
 public class WorldData {
 	
-	[XmlArray("Chunks")]
-	[XmlArrayItem("Chunk")]
 	public List<SerializableChunk> chunks = new List<SerializableChunk> ();
 	
 	public SerializableChunk findChunk(int x, int z) {
@@ -248,6 +199,7 @@ public class WorldData {
 	
 }
 
+[XmlRoot("Chunk")]
 public class SerializableChunk {
 	[XmlAttribute("x")]
 	public int x;

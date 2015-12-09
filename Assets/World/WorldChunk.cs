@@ -38,6 +38,10 @@ public class WorldChunk {
 
 	public void restoreChunkData(SerializableChunk restoreFrom) {
 	
+		if (restoreFrom == null) {
+			throw new InvalidOperationException("SerializableChunk is null.");
+		}
+
 		// restore sectors
 		for (int sector_x = 0; sector_x < GameSettings.LoadedConfig.ChunkLength_Sectors; ++sector_x) {
 			for (int sector_z = 0; sector_z < GameSettings.LoadedConfig.ChunkLength_Sectors; ++sector_z) {

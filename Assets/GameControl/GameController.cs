@@ -80,7 +80,23 @@ public class GameController : MonoBehaviour {
 		cells [6, 1].getRenderData ().addSprite ("grass__decal_5", 4);*/
 
 
+		/*WorldSectorLevel sectorLevel = World.GetSectorLevel (10, 0, 10);
+		WorldCell[,] cells = sectorLevel.getAllCells ();
+		cells [0, 0].getRenderData ().addSprite ("grass__decal_5", 4);*/
+
+
 		RenderingController.RenderSectorLevel (0, 0, 0);
+
+		/*RenderingController.UnrenderSectorLevel (0, 0, 0);
+		World.UnloadChunk (World.GetChunk (0, 0));
+		RenderingController.RenderSectorLevel (0, 0, 0);*/
+
+
+
+
+		//RenderingController.RenderSectorLevel (10, 0, 10);
+
+
 		/*RenderingController.UnrenderSectorLevel (0, 0, 0);
 
 		World.UnloadChunk (World.GetChunk (0, 0));

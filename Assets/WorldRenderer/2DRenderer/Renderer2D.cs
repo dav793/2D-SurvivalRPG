@@ -39,7 +39,7 @@ public class Renderer2D : StyleRenderer {
 		}
 		else {
 		
-			Debug.Log ("Rendering "+sectorLevel.indexToString());
+			Debug.Log ("Rendering -> "+sectorLevel.indexToString());
 			
 			WorldCell[,] cells = sectorLevel.getAllCells ();
 			
@@ -62,7 +62,7 @@ public class Renderer2D : StyleRenderer {
 		}
 		else {
 			
-			Debug.Log ("Unrendering "+sectorLevel.indexToString());
+			Debug.Log ("Unrendering -> "+sectorLevel.indexToString());
 			
 			WorldCell[,] cells = sectorLevel.getAllCells ();
 			

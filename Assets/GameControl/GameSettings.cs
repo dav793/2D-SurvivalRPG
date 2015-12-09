@@ -8,7 +8,6 @@ public class GameSettings : MonoBehaviour {
 	public bool autosavingEnabled;				// Chunks get saved automatically when unloaded
 	public string SavesPath;					// Path to Saves directory
 	public string ActiveWorldDir;				// Name of directory where the active world resides
-	public string ActiveWorldFile;				// Active worldfile name
 	public int WorldLength_Chunks;				// Length of World border in number of chunks
     public int ChunkLength_Sectors;             // Length of Chunk border in number of Sectors
     public int SectorLength_Cells;              // Length of Sector border in number of Cells
