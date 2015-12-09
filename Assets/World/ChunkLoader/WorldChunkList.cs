@@ -52,4 +52,8 @@ public class WorldChunkList {
 		return null;
 	}
 
+	public List<WorldChunk> getAllChunks() {
+		return chunks;
+	}
+
 }

@@ -19,6 +19,10 @@ public class WorldCell {
 
     }
 
+	public void restoreCellData(SerializableCell restoreFrom) {
+		renderData.restoreSpriteIds (restoreFrom.sprite_ids);
+	}
+
 	public string indexToString() {
 		return "Cell: (" + x + ", " + y + ", " + z + ")";
 	}

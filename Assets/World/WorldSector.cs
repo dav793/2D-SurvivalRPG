@@ -22,6 +22,10 @@ public class WorldSector {
         levels.initLevel(0);
     }
 
+	public void restoreSectorData(SerializableSector restoreFrom) {
+		levels.restoreLevelsData (restoreFrom.levels);
+	}
+
 	public string indexToString() {
 		return "Sector: (" + x + ", " + z + ")";
 	}
@@ -47,6 +51,14 @@ public class SectorLevels {
 			throw new InvalidOperationException ("Level " + level_y + " already exists in sector " + x + ", " + z + ".");
 	}
 
+	public void restoreLevelsData(List<SerializableLevel> restoreFrom) {
+	
+		for (int i = 0; i < restoreFrom.Count; ++i) {
+			levels[i].restoreLevelData(restoreFrom[i]);
+		}
+
+	}
+
     public bool levelExists(int level_y) {
         for (int i = 0; i < levels.Count; ++i) {
             if (levels[i].y == level_y)
@@ -66,5 +78,9 @@ public class SectorLevels {
 
         return null;
     }
+
+	public List<WorldSectorLevel> getAllLevels() {
+		return levels;
+	}
 
 }

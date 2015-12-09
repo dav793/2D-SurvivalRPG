@@ -39,6 +39,20 @@ public class WorldSectorLevel {
 
     }
 
+	public void restoreLevelData(SerializableLevel restoreFrom) {
+	
+		// restore cells
+		for (int cell_x = 0; cell_x < getSectorLengthInCells(); ++cell_x) {
+			for (int cell_z = 0; cell_z < getSectorLengthInCells(); ++cell_z) {
+				SerializableCell loadedCell = restoreFrom.cells[
+					cell_z * getSectorLengthInCells() + cell_x
+				];
+				cells[cell_x, cell_z].restoreCellData(loadedCell);
+			}
+		}
+
+	}
+
 	public WorldCell getCell(int cell_x, int cell_z) {
 
 		if (!(

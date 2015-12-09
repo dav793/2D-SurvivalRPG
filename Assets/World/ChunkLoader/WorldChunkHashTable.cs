@@ -40,6 +40,17 @@ public class WorldChunkHashTable {
 	int hash(int abs_chunk_index) {
 		return abs_chunk_index % totalBuckets;
 	}
+
+	public List<WorldChunk> getAllChunks() {
+		List<WorldChunk> chunks = new List<WorldChunk> ();
+		for (int i = 0; i < buckets.Length; ++i) {
+			List<WorldChunk> bucketElements = buckets[i].getAllElements ();
+			for(int j = 0; j < bucketElements.Count; ++j) {
+				chunks.Add(bucketElements[j]);
+			}
+		}
+		return chunks;
+	}
 	
 }
 
@@ -81,6 +92,10 @@ public class WorldChunkHTBucket {
 				return elements[i];
 		}
 		return null;
+	}
+
+	public List<WorldChunk> getAllElements() {
+		return elements;
 	}
 	
 }

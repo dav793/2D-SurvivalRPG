@@ -40,6 +40,13 @@ public class WorldCellRenderData : RenderData {
 
 	}
 
+	public void restoreSpriteIds(List<SerializableSpriteId> restoreFrom) {
+		sprite_ids = new Dictionary<string, int> ();
+		for (int i = 0; i < restoreFrom.Count; ++i) {
+			sprite_ids.Add(restoreFrom[i].id, restoreFrom[i].y);
+		}
+	}
+
 	bool spriteIsBase(string sprite_id) {
 		if (SpriteLoader.GetTerrainSpriteTypeToken (sprite_id) == "base")
 			return true;

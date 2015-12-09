@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class World {
 
     public static World GameWorld;
 
-	LoadedWorldChunks loadedChunks;
+	LoadedWorldChunks loadedChunks = new LoadedWorldChunks (LoadedChunks_DataStructure.List);
 
     public static void Init() {
         if (GameWorld == null) {
@@ -25,9 +26,16 @@ public class World {
     }
 
     public World() {
-		// Init loaded world chunks
-		loadedChunks = new LoadedWorldChunks (LoadedChunks_DataStructure.List);
+
     }
+
+	public static List<WorldChunk> GetAllLoadedChunks() {
+		return GameWorld.loadedChunks.getAllLoadedChunks ();
+	}
+
+	public static bool LoadChunk(int chunk_x, int chunk_z) {
+		return GameWorld.loadedChunks.loadChunk (chunk_x, chunk_z);
+	}
 
 	public static void LoadChunk(WorldChunk chunk) {
 		GameWorld.loadedChunks.loadChunk (chunk);
@@ -47,13 +55,13 @@ public class World {
 
 	public static WorldChunk GetChunk(int x, int z) {
 		if (GameWorld.chunkIsLoaded (WorldChunk.GetAbsoluteIndex (x, z))) {
-			// if chunk is already loaded
+			// chunk is already loaded, get loaded chunk
 			return GameWorld.loadedChunks.getChunk(x, z);		// get chunk	
 		} 
 		else {
-			// if chunk is not loaded
-			if (!GameWorld.loadedChunks.loadChunk(x, z)) {
-				// Chunk not found in the world file. Generate a new chunk.
+			// chunk is not loaded, try to restore it from world file
+			if (!World.LoadChunk(x, z)) {
+				// Chunk not found in the world file. Generate a new chunk and load it.
 				World.LoadChunk(new WorldChunk (x, z));
 			}
 			return GameWorld.loadedChunks.getChunk(x, z);

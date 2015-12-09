@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public enum LoadedChunks_DataStructure { HashTable, List };
 
@@ -40,8 +41,15 @@ public class LoadedWorldChunks {
 	public bool loadChunk(int chunk_x, int chunk_z) {
 
 		// Try to load from world file
+		WorldChunk chunk = WorldSerializer.LoadChunk (chunk_x, chunk_z);
+		if (chunk == null) {
+			// Chunk not found in file, return false
+			return false;
+		}
 
-		return false;
+		// Chunk restored from file successfully
+		loadChunk(chunk);
+		return true;
 
 	}
 
@@ -79,6 +87,17 @@ public class LoadedWorldChunks {
 				
 			case LoadedChunks_DataStructure.List:
 				return loadedWorldChunks_L.findChunk(WorldChunk.GetAbsoluteIndex(x, z));
+		}
+		return null;
+	}
+
+	public List<WorldChunk> getAllLoadedChunks() {
+		switch (dataStructure) {
+		case LoadedChunks_DataStructure.HashTable:
+			return loadedWorldChunks_HT.getAllChunks();
+			
+		case LoadedChunks_DataStructure.List:
+			return loadedWorldChunks_L.getAllChunks();
 		}
 		return null;
 	}
