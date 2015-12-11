@@ -4,6 +4,9 @@ using System.Collections;
 
 public class SpriteLoader : MonoBehaviour {
 
+	static int grass_base_tilecount = 1;
+	static int dirt_base_tilecount = 3;
+
 	public static Sprite GetTerrainSprite(string id) {
 
 		string filename;
@@ -33,13 +36,13 @@ public class SpriteLoader : MonoBehaviour {
 						filename = "grass_tiles";
 						switch (GetTerrainSpriteGroupToken (id)) {
 							case "short":
-								index += 0;
+								index += grass_base_tilecount*0;
 							break;
 							case "med":
-								index += 1;
+								index += grass_base_tilecount*1;
 							break;
 							case "tall":
-								index += 2;
+								index += grass_base_tilecount*2;
 							break;
 						}
 					break;
@@ -71,6 +74,7 @@ public class SpriteLoader : MonoBehaviour {
 					
 					case "base":
 						filename = "dirt_tiles";
+						index = dirt_base_tilecount * index + UnityEngine.Random.Range(0, dirt_base_tilecount);
 					break;
 
 					case "border":
@@ -104,6 +108,28 @@ public class SpriteLoader : MonoBehaviour {
 
 	static string[] GetSpriteIdTokens(string sprite_id) {
 		return sprite_id.Split ('_');
+	}
+
+	public static bool SpriteIsBase(string sprite_id) {
+		if (SpriteLoader.GetTerrainSpriteTypeToken (sprite_id) == "base")
+			return true;
+		return false;
+	}
+
+	public static bool SpriteIsBorder(string sprite_id) {
+		if (SpriteLoader.GetTerrainSpriteTypeToken (sprite_id) == "border")
+			return true;
+		return false;
+	}
+
+	public static bool SpriteIsOverlapping(string sprite_id) {
+		if (
+			SpriteLoader.SpriteIsBorder (sprite_id) && 
+			Int32.Parse (SpriteLoader.GetTerrainSpriteIdToken (sprite_id)) >= 8 &&
+			Int32.Parse (SpriteLoader.GetTerrainSpriteIdToken (sprite_id)) <= 11
+		)
+			return true;
+		return false;
 	}
 
 }

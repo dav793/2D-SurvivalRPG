@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class WorldChunk {
 	
@@ -29,7 +30,8 @@ public class WorldChunk {
 			for (int sector_z = 0; sector_z < GameSettings.LoadedConfig.ChunkLength_Sectors; ++sector_z) {
 				sectors[sector_x, sector_z] = new WorldSector(
 					x * GameSettings.LoadedConfig.ChunkLength_Sectors + sector_x, 
-					z * GameSettings.LoadedConfig.ChunkLength_Sectors + sector_z
+					z * GameSettings.LoadedConfig.ChunkLength_Sectors + sector_z,
+					this
 				);
 			}
 		}
@@ -91,6 +93,93 @@ public class WorldChunk {
 			index_z < GameSettings.LoadedConfig.WorldLength_Chunks
 		))
 			throw new InvalidOperationException("Chunk index is out of world bounds.");
+	}
+
+	public WorldChunk getNeighborChunk(NeighborDirections direction) {
+		
+		switch (direction) {
+		case NeighborDirections.N:
+			if(z < GameSettings.LoadedConfig.WorldLength_Chunks-1) {
+				return World.GetChunk (x, z+1, false);
+			}
+			break;
+		case NeighborDirections.NE:
+			if(x < GameSettings.LoadedConfig.WorldLength_Chunks-1 && z < GameSettings.LoadedConfig.WorldLength_Chunks-1) {
+				return World.GetChunk (x+1, z+1, false);
+			}
+			break;
+		case NeighborDirections.E:
+			if(x < GameSettings.LoadedConfig.WorldLength_Chunks-1) {
+				return World.GetChunk (x+1, z, false);
+			}
+			break;
+		case NeighborDirections.SE:
+			if(x < GameSettings.LoadedConfig.WorldLength_Chunks-1 && z > 0) {
+				return World.GetChunk (x+1, z-1, false);
+			}
+			break;
+		case NeighborDirections.S:
+			if(z > 0) {
+				return World.GetChunk (x, z-1, false);
+			}
+			break;
+		case NeighborDirections.SW:
+			if(x > 0 && z > 0) {
+				return World.GetChunk (x-1, z-1, false);
+			}
+			break;
+		case NeighborDirections.W:
+			if(x > 0) {
+				return World.GetChunk (x-1, z, false);
+			}
+			break;
+		case NeighborDirections.NW:
+			if(x > 0 && z < GameSettings.LoadedConfig.WorldLength_Chunks-1) {
+				return World.GetChunk (x-1, z+1, false);
+			}
+			break;
+		}
+		
+		return null;
+	}
+
+	public List<WorldSector> getBorderSectors(NeighborDirections border_side) {
+		List<WorldSector> border = new List<WorldSector> ();
+		switch (border_side) {
+		case NeighborDirections.N:
+			for(int i = 0; i < GameSettings.LoadedConfig.ChunkLength_Sectors; ++i) {
+				border.Add(getSector(i, GameSettings.LoadedConfig.ChunkLength_Sectors-1));
+			}
+			return border;
+		case NeighborDirections.NE:
+			border.Add(getSector(GameSettings.LoadedConfig.ChunkLength_Sectors-1, GameSettings.LoadedConfig.ChunkLength_Sectors-1));
+			return border;
+		case NeighborDirections.E:
+			for(int i = 0; i < GameSettings.LoadedConfig.ChunkLength_Sectors; ++i) {
+				border.Add(getSector(GameSettings.LoadedConfig.ChunkLength_Sectors-1, i));
+			}
+			return border;
+		case NeighborDirections.SE:
+			border.Add(getSector(GameSettings.LoadedConfig.ChunkLength_Sectors-1, 0));
+			return border;
+		case NeighborDirections.S:
+			for(int i = 0; i < GameSettings.LoadedConfig.ChunkLength_Sectors; ++i) {
+				border.Add(getSector(i, 0));
+			}
+			return border;
+		case NeighborDirections.SW:
+			border.Add(getSector(0, 0));
+			return border;
+		case NeighborDirections.W:
+			for(int i = 0; i < GameSettings.LoadedConfig.ChunkLength_Sectors; ++i) {
+				border.Add(getSector(0, i));
+			}
+			return border;
+		case NeighborDirections.NW:
+			border.Add(getSector(0, GameSettings.LoadedConfig.ChunkLength_Sectors-1));
+			return border;
+		}
+		return null;
 	}
 
 	public string indexToString() {

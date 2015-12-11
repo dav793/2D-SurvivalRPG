@@ -25,7 +25,7 @@ public class RenderingController : MonoBehaviour {
 		Debug.Log ("Setting up renderer...");
         SetActiveRenderer(Renderers.Default2D);
 		ActiveRenderer.init ();
-		Debug.Log ("Renderer set.");
+		Debug.Log ("Renderer ready.");
 	}
 
     static void SetActiveRenderer(Renderers style) {

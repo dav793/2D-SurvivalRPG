@@ -12,7 +12,7 @@ public class WorldCellRenderData : RenderData {
 	}
 
 	public void setDefaultBaseSprite() {
-		addSprite ("grass_short_base_0", 1);
+		//addSprite ("dirt_light_base_0", 0);
 		//addSprite ("grass_tall_border_7", 3);
 	}
 
@@ -34,10 +34,99 @@ public class WorldCellRenderData : RenderData {
 			}
 		}*/
 
-		// add the sprite if it's not already contained
-		if (!sprite_ids.ContainsKey(sprite_id))
-			sprite_ids.Add (sprite_id, y_index);
+		if (sprite_id == "" || sprite_id == null) {
+			return;
+		}
 
+		// add (or replace) the sprite
+		sprite_ids.Remove (sprite_id);
+		sprite_ids.Add (sprite_id, y_index);
+
+	}
+
+	public int findSpriteId(string sprite_id) {
+		foreach (KeyValuePair<string, int> spr in sprite_ids) {
+			if(spr.Key == sprite_id)
+				return spr.Value;
+		}
+		return -9999;
+	}
+
+	public bool containsBiomeGroupBase(string biome, string group) {
+		//check if any bases are of biome and group
+		foreach (KeyValuePair<string, int> spr in sprite_ids) {
+			if(SpriteLoader.SpriteIsBase(spr.Key)) {
+				if(
+					biome == SpriteLoader.GetTerrainSpriteBiomeToken(spr.Key) &&
+					group == SpriteLoader.GetTerrainSpriteGroupToken(spr.Key)
+					)
+					return true;
+			}
+		}
+		
+		return false;
+	}
+
+	public bool containsBiomeGroupBase(string biome, string group, out int index_y) {
+		//check if any bases are of biome and group
+		foreach (KeyValuePair<string, int> spr in sprite_ids) {
+			if(SpriteLoader.SpriteIsBase(spr.Key)) {
+				if(
+					biome == SpriteLoader.GetTerrainSpriteBiomeToken(spr.Key) &&
+					group == SpriteLoader.GetTerrainSpriteGroupToken(spr.Key)
+				) {
+					index_y = spr.Value;
+					return true;
+				}
+			}
+		}
+
+		index_y = -9999;
+		return false;
+	}
+
+	public int getBiomeGroupBaseY(string biome, string group) {
+		//check if any bases are of biome and group
+		foreach (KeyValuePair<string, int> spr in sprite_ids) {
+			if(SpriteLoader.SpriteIsBase(spr.Key)) {
+				if(
+					biome == SpriteLoader.GetTerrainSpriteBiomeToken(spr.Key) &&
+					group == SpriteLoader.GetTerrainSpriteGroupToken(spr.Key)
+					)
+					return spr.Value;
+			}
+		}
+		return -9999;
+	}
+
+	public bool spriteIdIsActiveBase(string sprite_id) {
+		int active_base_y = -9999;
+		
+		// first, find the Y of the active (highest-y) base
+		foreach (KeyValuePair<string, int> spr in sprite_ids) {
+			if(SpriteLoader.SpriteIsBase(spr.Key)) {
+				if(active_base_y < spr.Value)
+					active_base_y = spr.Value;
+			}
+		}
+		
+		// then, check if sprite_id (if exists) is the active base
+		int y_index = findSpriteId(sprite_id);
+		if(y_index != -9999 && y_index == active_base_y)
+			return true;
+		
+		return false;
+	}
+
+	public void removeBorderSprites() {
+		List<string> ids = new List<string> ();
+		foreach (KeyValuePair<string, int> spr in sprite_ids) {
+			if (SpriteLoader.SpriteIsBorder(spr.Key))
+				ids.Add(spr.Key);
+		}
+		for (int i = 0; i < ids.Count; ++i) {
+			sprite_ids.Remove(ids[i]);
+		}
 	}
 
 	public void restoreSpriteIds(List<SerializableSpriteId> restoreFrom) {
@@ -47,10 +136,31 @@ public class WorldCellRenderData : RenderData {
 		}
 	}
 
-	bool spriteIsBase(string sprite_id) {
-		if (SpriteLoader.GetTerrainSpriteTypeToken (sprite_id) == "base")
-			return true;
+	/*public bool biomeGroupIsActiveBase(string biome, string group) {
+		int active_base_y = -9999;
+
+		// first, find the Y of the active (highest-y) base
+		foreach (KeyValuePair<string, int> spr in sprite_ids) {
+			if(spriteIsBase(spr.Key)) {
+				if(active_base_y < spr.Value)
+					active_base_y = spr.Value;
+			}
+		}
+
+		// then, check if any bases are of biome and group and are at least as high as the active base
+		foreach (KeyValuePair<string, int> spr in sprite_ids) {
+			if(spriteIsBase(spr.Key)) {
+				if(
+					biome == SpriteLoader.GetTerrainSpriteBiomeToken(spr.Key) &&
+					group == SpriteLoader.GetTerrainSpriteGroupToken(spr.Key)
+				) {
+					if(spr.Value >= active_base_y)
+						return true;
+				}
+			}
+		}
+
 		return false;
-	}
+	}*/
 
 }

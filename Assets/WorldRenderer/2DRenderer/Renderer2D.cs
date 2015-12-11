@@ -38,18 +38,20 @@ public class Renderer2D : StyleRenderer {
 			Debug.LogWarning ("Sector level is already rendered!");
 		}
 		else {
-		
-			Debug.Log ("Rendering -> "+sectorLevel.indexToString());
-			
+
 			WorldCell[,] cells = sectorLevel.getAllCells ();
 			
-			for (int x = 0; x < sectorLevel.getSectorLengthInCells(); ++x) {
-				for (int z = 0; z < sectorLevel.getSectorLengthInCells(); ++z) {
+			for (int x = 0; x < GameSettings.LoadedConfig.SectorLength_Cells; ++x) {
+				for (int z = 0; z < GameSettings.LoadedConfig.SectorLength_Cells; ++z) {
 					renderCell (cells[x, z]);
 				}
 			}
 
 			sectorLevel.isRendered = true;
+			Debug.Log (sectorLevel.indexToString()+" was rendered.");
+
+			//debug lines
+			debug_delimitSectorLevel (sectorLevel);
 
 		}
 
@@ -61,18 +63,17 @@ public class Renderer2D : StyleRenderer {
 			Debug.LogWarning ("Sector level is not rendered!");
 		}
 		else {
-			
-			Debug.Log ("Unrendering -> "+sectorLevel.indexToString());
-			
+
 			WorldCell[,] cells = sectorLevel.getAllCells ();
 			
-			for (int x = 0; x < sectorLevel.getSectorLengthInCells(); ++x) {
-				for (int z = 0; z < sectorLevel.getSectorLengthInCells(); ++z) {
+			for (int x = 0; x < GameSettings.LoadedConfig.SectorLength_Cells; ++x) {
+				for (int z = 0; z < GameSettings.LoadedConfig.SectorLength_Cells; ++z) {
 					unrenderCell (cells[x, z]);
 				}
 			}
 
 			sectorLevel.isRendered = false;
+			Debug.Log (sectorLevel.indexToString()+" was unrendered.");
 
 		}
 
@@ -91,6 +92,41 @@ public class Renderer2D : StyleRenderer {
 		cell.getRenderObject().terminate ();
 		worldObjectPool.push (cell.getRenderObject().gameObject);
 		cell.detachRenderObject ();
+	}
+
+	// Debug functions
+	void debug_delimitSectorLevel(WorldSectorLevel sectorLevel) {
+		WorldCell[,] cells = sectorLevel.getAllCells ();
+
+		int cell_width = GameSettings.LoadedConfig.CellLength_Pixels;
+		Debug.DrawLine(
+			new Vector3(cells[0,0].x*cell_width-cell_width/2, sectorLevel.y, cells[0,0].z*cell_width-cell_width/2), 
+			new Vector3(cells[0,0].x*cell_width-cell_width/2, sectorLevel.y, cells[9,9].z*cell_width+cell_width/2), 
+			Color.red,
+			10000f,
+			false
+		);
+		Debug.DrawLine(
+			new Vector3(cells[0,0].x*cell_width-cell_width/2, sectorLevel.y, cells[9,9].z*cell_width+cell_width/2), 
+			new Vector3(cells[9,9].x*cell_width+cell_width/2, sectorLevel.y, cells[9,9].z*cell_width+cell_width/2), 
+			Color.red,
+			10000f,
+			false
+		);
+		Debug.DrawLine(
+			new Vector3(cells[9,9].x*cell_width+cell_width/2, sectorLevel.y, cells[9,9].z*cell_width+cell_width/2), 
+			new Vector3(cells[9,9].x*cell_width+cell_width/2, sectorLevel.y, cells[0,0].z*cell_width-cell_width/2), 
+			Color.red,
+			10000f,
+			false
+		);
+		Debug.DrawLine(
+			new Vector3(cells[9,9].x*cell_width+cell_width/2, sectorLevel.y, cells[0,0].z*cell_width-cell_width/2), 
+			new Vector3(cells[0,0].x*cell_width-cell_width/2, sectorLevel.y, cells[0,0].z*cell_width-cell_width/2), 
+			Color.red,
+			10000f,
+			false
+		);
 	}
 
 }

@@ -481,7 +481,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autosavingEnabled: 0
   SavesPath: saves
-  ActiveWorldDir: world1
+  ActiveWorldDir: world3
   WorldLength_Chunks: 10
   ChunkLength_Sectors: 10
   SectorLength_Cells: 10

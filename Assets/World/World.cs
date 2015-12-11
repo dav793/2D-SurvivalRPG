@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+public enum NeighborDirections {N, NE, E, SE, S, SW, W, NW};
+
 public class World {
 
     public static World GameWorld;
@@ -12,12 +14,13 @@ public class World {
     public static void Init() {
         if (GameWorld == null) {
             
+			Debug.Log("Preparing world...");
+
 			GameWorld = new World();
 
-			// Load initial world chunks
-			Debug.Log("Creating world...");
-			// Generate world here maybe?
-			Debug.Log("World created.");
+			// Generate world here maybe? (Load initial world chunks)
+
+			Debug.Log("World ready.");
 
         }
         else {
@@ -53,7 +56,7 @@ public class World {
 		return loadedChunks.chunkIsLoaded (abs_chunk_index);
 	}
 
-	public static WorldChunk GetChunk(int x, int z) {
+	public static WorldChunk GetChunk(int x, int z, bool generateIfNotExists = true) {
 		if (GameWorld.chunkIsLoaded (WorldChunk.GetAbsoluteIndex (x, z))) {
 			// chunk is already loaded, get loaded chunk
 			return GameWorld.loadedChunks.getChunk(x, z);		// get chunk	
@@ -61,37 +64,55 @@ public class World {
 		else {
 			// chunk is not loaded, try to restore it from world file
 			if (!World.LoadChunk(x, z)) {
-				// Chunk not found in the world file. Generate a new chunk and load it.
-				World.LoadChunk(new WorldChunk (x, z));
+				// Chunk not found in the world file.
+				if(generateIfNotExists)
+					// Generate a new chunk and load it.
+					World.LoadChunk(WorldChunkGenerator.GenerateChunk (x, z));
+				else
+					// Do not generate chunk.
+					return null;
 			}
 			return GameWorld.loadedChunks.getChunk(x, z);
 		}
 	}
 
-	public static WorldSector GetSector(int x, int z) {
+	public static WorldSector GetSector(int x, int z, bool generateIfNotExists = true) {
 		WorldChunk chunk = World.GetChunk (
 			x / GameSettings.LoadedConfig.ChunkLength_Sectors, 
-			z / GameSettings.LoadedConfig.ChunkLength_Sectors
+			z / GameSettings.LoadedConfig.ChunkLength_Sectors,
+			generateIfNotExists
 		);
-		return chunk.getSector (x, z);
+
+		if (chunk != null)
+			return chunk.getSector (x, z);
+		else 
+			return null;
 	}
 
-	public static WorldSectorLevel GetSectorLevel(int x, int y, int z) {
-		return World.GetSector (x, z).levels.getLevel (y);
+	public static WorldSectorLevel GetSectorLevel(int x, int y, int z, bool generateIfNotExists = true) {
+		WorldSector sector = World.GetSector (x, z, generateIfNotExists);
+		if (sector != null)
+			return sector.levels.getLevel (y);
+		else
+			return null;
 	}
 
-	public static WorldCell GetCell(int x, int y, int z) {
-
+	public static WorldCell GetCell(int x, int y, int z, bool generateIfNotExists = true) {
+		
 		if (x < 0 || z < 0)
 			throw new InvalidOperationException ("Cell ("+x+","+y+","+z+") is out of world bounds.");
 
 		WorldSectorLevel level = World.GetSectorLevel (
 			x / GameSettings.LoadedConfig.SectorLength_Cells,
 			y,
-			z / GameSettings.LoadedConfig.SectorLength_Cells
+			z / GameSettings.LoadedConfig.SectorLength_Cells,
+			generateIfNotExists
 		);
-		
-		return level.getCell (x, z);
+
+		if (level != null)
+			return level.getCell (x, z);
+		else 
+			return null;
 
 	}
 

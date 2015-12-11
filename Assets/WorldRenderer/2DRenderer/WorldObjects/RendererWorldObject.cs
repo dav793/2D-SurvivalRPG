@@ -67,10 +67,16 @@ public class RendererWorldObject : MonoBehaviour {
 			foreach (KeyValuePair<string, int> spr_id in sprite_ids) {
 				// set the sprite
 				sprites[i].GetComponent<SpriteRenderer> ().sprite = SpriteLoader.GetTerrainSprite(spr_id.Key);
+
+				// add border overlap offset if necessary (for borders which overlap any other border)
+				float over_offset = 0f;
+				if(SpriteLoader.SpriteIsOverlapping(spr_id.Key))
+					over_offset = 0.05f;
+
 				// adjust y index
 				sprites[i].transform.position = new Vector3(
 					sprites[i].transform.position.x,
-					sprites[i].transform.position.y + spr_id.Value*0.1f,
+					sprites[i].transform.position.y + spr_id.Value*0.1f + over_offset,
 					sprites[i].transform.position.z
 				);
 				++i;
